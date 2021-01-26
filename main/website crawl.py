@@ -1,6 +1,7 @@
-
+from bs4 import BeautifulSoup
 import urllib.request
 import urllib.error
+import re
 # url = "https://www.zhipin.com/beijing/"
 # headers = {
 #     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -10,7 +11,7 @@ import urllib.error
 # response = urllib.request.urlopen(req)
 # print(response.read().decode("utf-8"))
 def main():
-    baseurl = "https://www.zhipin.com/beijing/"
+    baseurl = "https://www.zhipin.com/c101010100-p100101/"
     # data_list = get_data(baseurl)
     # save_path = ".\\职位信息"
 #request
@@ -30,11 +31,22 @@ def ask_url(url):
         if hasattr(e, "reason"):
             print(e.reason)
     print(html)
-# def get_data():
-#     data_list = [ ]
-#     return data_list
+pattern = re.compile(r'<a href="(.*?)">')
+def get_data():
+    data_list = [ ]
+    for i in range(0,10):
+        url = baseurl + str(i*25)
+        html = ask_url(url)
+        soup = BeautifulSoup(html, "html.parse")
+        for item in soup.find_all("div", class_="item"):
+            data = []
+            item = str(item)
+            link = re.findall(pattern, item)
+            print(link)
+    return data_list
 # #save data
 # def save_data(savepath):
 #     print("...")
 if __name__ == "__main__":
     main()
+#二次点击页面，抓取英文关键词
