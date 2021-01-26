@@ -44,9 +44,16 @@ def get_data():
             link = re.findall(pattern, item)
             print(link)
     return data_list
-# #save data
+# save data
 # def save_data(savepath):
 #     print("...")
 if __name__ == "__main__":
     main()
-#二次点击页面，抓取英文关键词
+# company name
+findcompanyname = re.compile()
+# monthly salary
+findsalary = re.compile()
+# technology request
+findtechnologyrequest = re.compile()
+# work position
+findworkposition = re.compile()
