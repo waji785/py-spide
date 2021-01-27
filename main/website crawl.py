@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import sqlite3
 import urllib.request
 import urllib.error
 import re
@@ -57,3 +58,21 @@ findsalary = re.compile()
 findtechnologyrequest = re.compile()
 # work position
 findworkposition = re.compile()
+# description
+finddescription = re.compile()
+def init_db(dbpath):
+    sql = '''
+        create table jobtq(
+        id integer primary key autoincrement,
+        findcompanyname text,
+        findsalary text,
+        findtechnologyrequest text,
+        findworkposition text,
+        finddescription text,
+        )
+    '''
+    conn = sqlite3.connect(dbpath)
+    cursor = conn.cursor()
+    cursor.execute(sql)
+    conn.commit()
+    conn.close()
