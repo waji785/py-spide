@@ -12,18 +12,20 @@ import re
 # response = urllib.request.urlopen(req)
 # print(response.read().decode("utf-8"))
 def main():
-    baseurl = "https://www.zhipin.com/c101010100-p100101/"
+    baseurl = 'https://www.liepin.com/zhaopin/?sfrom=click-pc_homepage-centre_searchbox-search_new&dqs=010&key=JAVA'
     # data_list = get_data(baseurl)
     # save_path = ".\\职位信息"
-# 伪装请求，目前会出现"code":37,"message":"您的访问行为异常.","zpData":
+    # 伪装请求，目前会出现"code":37,"message":"您的访问行为异常.","zpData":,已确定是触发了boss直聘某种反爬
+    #
     ask_url(baseurl)
 def ask_url(url):
-    head = {#camouflage
+    # 请求头
+    head = {
         'accept': '*/*',
         'accept - encoding': 'gzip, deflate, br',
         'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
         'x-requested-with': 'XMLHttpRequest',
-        # 'referer':'https://www.zhipin.com/web/geek/recommend?random=1611842001907',
+        'referer':'https://www.liepin.com/zhaopin/?sfrom=click-pc_homepage-centre_searchbox-search_new&dqs=010&key=JAVA',
         'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36 Edg/88.0.705.50',
 
     }
@@ -40,11 +42,11 @@ def ask_url(url):
     print(html)
 def get_data():
     data_list = [ ]
-    for i in range(0,2):
+    for i in range(0,1):
         url = baseurl + "?page=2&ka=page-"+str(i)
         html = ask_url(url)
         soup = BeautifulSoup(html, "html.parse")
-        for item in soup.find_all('div', class_="job-primary"):#获取职位列表
+        for item in soup.find_all('li', class_="data-info"):#获取职位列表
             data = []   #保存职位信息
             item = str(item)
             link = re.findall(pattern, item)[0]#获取职位列表里的单个职位
