@@ -11,4 +11,5 @@ python 3.9.1
 ---------------------------------------------------------------
 log 
 ---------------------------------------------------------------
-because of pycharm community doesn't support sql,I will use vscode to connect mysql 2021.1.27
+~because of pycharm community doesn't support sql,I will use vscode to connect mysql 2021.1.27~
+I has solve this problem(2021.1.27)
