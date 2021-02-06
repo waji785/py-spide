@@ -3,22 +3,14 @@ import sqlite3
 import urllib.request
 import urllib.error
 import re
-# url = "https://www.zhipin.com/beijing/"
-# headers = {
-#     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-#                   "(KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36 Edg/88.0.705.50"
-# }
-# req = urllib.request.Request(url=url, headers=headers)
-# response = urllib.request.urlopen(req)
-# print(response.read().decode("utf-8"))
+import xlwt
 def main():
     baseurl = 'https://www.liepin.com/zhaopin/?sfrom=click-pc_homepage-centre_searchbox-search_new&dqs=010&key=JAVA'
-    # data_list = get_data(baseurl)
-    # save_path = ".\\职位信息"
+    datalist = getdata(baseurl)
+    savepath = ".\\职位信息"
     # 伪装请求，目前会出现"code":37,"message":"您的访问行为异常.","zpData":,已确定是触发了boss直聘某种反爬
-    #
-    ask_url(baseurl)
-def ask_url(url):
+    askurl(baseurl)
+def askurl(url):
     # 请求头
     head = {
         'accept': '*/*',
@@ -29,9 +21,11 @@ def ask_url(url):
         'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36 Edg/88.0.705.50',
 
     }
+    #构造request
     request = urllib.request.Request(url=url, headers=head)
     html = ""
     try:
+    #构造response
         response = urllib.request.urlopen(request)
         html = response.read().decode("utf-8")
     except urllib.error.URLError as e:
@@ -40,34 +34,57 @@ def ask_url(url):
         if hasattr(e, "reason"):
             print(e.reason)
     print(html)
-def get_data():
-    data_list = [ ]
+def getdata():
+    datalist = [ ]
     for i in range(0,1):
         url = baseurl + "?page=2&ka=page-"+str(i)
-        html = ask_url(url)
+        html = askurl(url)
         soup = BeautifulSoup(html, "html.parse")
-        for item in soup.find_all('li', class_="data-info"):#获取职位列表
-            data = []   #保存职位信息
-            item = str(item)
-            link = re.findall(pattern, item)[0]#获取职位列表里的单个职位
-            print(item)
-    return data_list
-# 保存数据
-# def save_data(savepath):
-#     print("...")
+        # 获取职位列表
+        for item in soup.find_all('li', class_="data-info"):
+            # 保存职位信息
+            data = []
+            # item = str(item)
+            #添加公司名字，月薪，技能要求，工作地点，职位描述到列表
+            companyname = re.findall(findcompanyname, item)[0]
+            data.append(companyname)
+            salary = re.findall(findsalary, item)[0]
+            data.append(salary)
+            technologyrequest = re.findall(findtechnologyrequest, item)[0]
+            data.append(technologyrequest)
+            workposition = re.findall(findworkposition, item)[0]
+            data.append(workposition)
+            description = re.findall(finddescription, item)[0]
+            data.append(description)
+
+    return datalist
+# 保存数据到excel
+def savedata(datalist,savepath):
+    print("...")
+    book = xlwt.Workbook(encodeing="utf-8",style_copression=0)
+    sheet = book.add_sheet('职位表单',cell_overwrite_ok=True)
+    #定义列
+    col = ("公司名字")
+    for i in range(0,5):
+        sheet.write(0,i,col[i])
+    for i in range(0,):
+        dta = datalist[i]
+        for j in range(0,5):
+            sheet.write(i+1,j,data[j])
+    book.save(savepath)
 if __name__ == "__main__":
     main()
     # init_db("movetest.db")
-# # 公司名字正则
-# findcompanyname = re.compile(r'')
-# # 月薪正则
-# findsalary = re.compile()
-# # technology request
-# findtechnologyrequest = re.compile()
-# # 工作地点正则
-# findworkposition = re.compile()
-# # 描述正则
-# finddescription = re.compile()
+# 公司名字正则
+findcompanyname = re.compile(r'')
+# 月薪正则
+findsalary = re.compile()
+# 技能要求
+findtechnologyrequest = re.compile()
+# 工作地点正则
+findworkposition = re.compile()
+# 描述正则
+finddescription = re.compile()
 def init_db(dbpath):
     sql = '''
         create table jobtq(
