@@ -14,3 +14,5 @@ log
 ~because of pycharm community doesn't support sql,I will use vscode to connect mysql 2021.1.27~（solved）
 
 I will reconsitution code by scripy 2021.2.6
+
+add flask,code cant run because of there are sth bugs
