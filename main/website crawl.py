@@ -8,8 +8,8 @@ def main():
     baseurl = 'https://www.liepin.com/zhaopin/?sfrom=click-pc_homepage-centre_searchbox-search_new&dqs=010&key=JAVA'
     datalist = getdata(baseurl)
     savepath = ".\\职位信息"
-    # 伪装请求，目前会出现"code":37,"message":"您的访问行为异常.","zpData":,已确定是触发了boss直聘某种反爬
-    askurl(baseurl)
+    print(datalist)
+    # 伪装请求
 def askurl(url):
     # 请求头
     head = {
@@ -33,31 +33,26 @@ def askurl(url):
             print(e.code)
         if hasattr(e, "reason"):
             print(e.reason)
-    print(html)
-def getdata():
-    datalist = [ ]
+def getdata(baseurl):
+    data = [ ]
     for i in range(0,1):
         url = baseurl + "?page=2&ka=page-"+str(i)
         html = askurl(url)
-        soup = BeautifulSoup(html, "html.parse")
+        soup = BeautifulSoup(html, "html.parser")
+        print(html)
         # 获取职位列表
-        for item in soup.find_all('li', class_="data-info"):
+        for item in soup.find_all('div', class_="job-content"):
             # 保存职位信息
             data = []
-            # item = str(item)
-            #添加公司名字，月薪，技能要求，工作地点，职位描述到列表
+            item = str(item)
+            # 添加公司名字，月薪，技能要求，工作地点，职位描述到列表
             companyname = re.findall(findcompanyname, item)[0]
             data.append(companyname)
             salary = re.findall(findsalary, item)[0]
             data.append(salary)
-            technologyrequest = re.findall(findtechnologyrequest, item)[0]
-            data.append(technologyrequest)
             workposition = re.findall(findworkposition, item)[0]
             data.append(workposition)
-            description = re.findall(finddescription, item)[0]
-            data.append(description)
-
-    return datalist
+    return data
 # 保存数据到excel
 def savedata(datalist,savepath):
     print("...")
@@ -74,30 +69,29 @@ def savedata(datalist,savepath):
     book.save(savepath)
 if __name__ == "__main__":
     main()
+    print("....")
     # init_db("movetest.db")
 # 公司名字正则
-findcompanyname = re.compile(r'')
+findcompanyname = re.compile(r'<p class="companyy-name">(.*?)<span>')
 # 月薪正则
-findsalary = re.compile()
-# 技能要求
-findtechnologyrequest = re.compile()
+findsalary = re.compile(r'<span class="text-warning">(.*?)<span>')
 # 工作地点正则
-findworkposition = re.compile()
+findworkposition = re.compile(r'<span class="area">(.*?)<span>')
 # 描述正则
-finddescription = re.compile()
-def init_db(dbpath):
-    sql = '''
-        create table jobtq(
-        id integer primary key autoincrement,
-        findcompanyname text,
-        findsalary text,
-        findtechnologyrequest text,
-        findworkposition text,
-        finddescription text,
-        )
-    '''
-    conn = sqlite3.connect(dbpath)
-    cursor = conn.cursor()
-    cursor.execute(sql)
-    conn.commit()
-    conn.close()
+# finddescription = re.compile()
+# # def init_db(dbpath):
+#     sql = '''
+#         create table jobtq(
+#         id integer primary key autoincrement,
+#         findcompanyname text,
+#         findsalary text,
+#         findtechnologyrequest text,
+#         findworkposition text,
+#         finddescription text,
+#         )
+#     '''
+#     conn = sqlite3.connect(dbpath)
+#     cursor = conn.cursor()
+#     cursor.execute(sql)
+#     conn.commit()
+#     conn.close()
